@@ -1,3 +1,7 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -24,12 +28,86 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const cursorAnimation = useAnimation();
+
+  useEffect(() => {
+    const mouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousemove", mouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", mouseMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    cursorAnimation.start({
+      x: mousePosition.x - 16,
+      y: mousePosition.y - 16,
+      transition: { type: "spring", damping: 3 }
+    });
+  }, [mousePosition, cursorAnimation]);
+
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white text-gray-800 font-sans`}
       >
         <Navbar />
+        
+        {/* Background Blobs */}
+        <motion.div
+          className="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"
+          animate={{
+            scale: [1, 2, 2, 1, 1],
+            rotate: [0, 0, 270, 270, 0],
+            borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+          }}
+          transition={{
+            duration: 12,
+            ease: "easeInOut",
+            repeat: Infinity,
+          }}
+        />
+        <motion.div
+          className="absolute top-20 -right-20 w-40 h-40 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"
+          animate={{
+            scale: [1, 2, 2, 1, 1],
+            rotate: [0, 270, 270, 0, 0],
+            borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+          }}
+          transition={{
+            duration: 12,
+            ease: "easeInOut",
+            repeat: Infinity,
+            delay: 2,
+          }}
+        />
+        <motion.div
+          className="absolute -bottom-8 right-40 w-40 h-40 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"
+          animate={{
+            scale: [1, 2, 2, 1, 1],
+            rotate: [0, 0, 270, 270, 0],
+            borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+          }}
+          transition={{
+            duration: 12,
+            ease: "easeInOut",
+            repeat: Infinity,
+            delay: 4,
+          }}
+        />
+
+        {/* Cursor Animation */}
+        <motion.div
+          className="fixed top-0 left-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mix-blend-multiply pointer-events-none z-50"
+          animate={cursorAnimation}
+        />
+        
+        {/* Page Content */}
         {children}
       </body>
     </html>
