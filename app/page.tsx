@@ -62,7 +62,7 @@ export default function Home() {
         }}
       />
 
-      <main className="pt-20 relative z-10">
+      <main className=" relative z-10">
         <section className="min-h-[calc(100vh-80px)] flex flex-col justify-center items-center relative">
           <motion.h2
             className="text-6xl md:text-8xl font-bold text-center mb-8"
